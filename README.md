@@ -1,8 +1,8 @@
 # Visingenium
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="animation/logo-dark.gif">
-  <img src="animation/logo-light.gif" alt="Visingenium" width="600">
+  <source media="(prefers-color-scheme: dark)" srcset="animation/animation_logo.gif">
+  <img src="animation/animation_logo.gif" alt="Visingenium" width="600">
 </picture>
 
 Browser-based simulators for the core engineering lectures. The start page
