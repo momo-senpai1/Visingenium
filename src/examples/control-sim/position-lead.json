@@ -1,0 +1,177 @@
+{
+ "format": "practical-engineering-sheet",
+ "app": "control-sim",
+ "name": "Position control: lead compensator + IT1 motor",
+ "payload": {
+  "nodes": [
+   {
+    "id": "w",
+    "type": "cblock",
+    "position": {
+     "x": 0,
+     "y": 100
+    },
+    "data": {
+     "kind": "source",
+     "wave": "step",
+     "amp": 1,
+     "t0": 0.5,
+     "name": "w"
+    }
+   },
+   {
+    "id": "e",
+    "type": "cblock",
+    "position": {
+     "x": 130,
+     "y": 108
+    },
+    "data": {
+     "kind": "sum",
+     "signs": "+-",
+     "name": "e"
+    }
+   },
+   {
+    "id": "R",
+    "type": "cblock",
+    "position": {
+     "x": 220,
+     "y": 92
+    },
+    "data": {
+     "kind": "tf",
+     "spec": {
+      "kind": "lead",
+      "K": 4,
+      "T": 0.5,
+      "alpha": 0.1
+     },
+     "name": "R"
+    }
+   },
+   {
+    "id": "G",
+    "type": "cblock",
+    "position": {
+     "x": 420,
+     "y": 92
+    },
+    "data": {
+     "kind": "tf",
+     "spec": {
+      "kind": "IT1",
+      "K": 1,
+      "T": 0.5
+     },
+     "name": "G"
+    }
+   },
+   {
+    "id": "sc",
+    "type": "cblock",
+    "position": {
+     "x": 640,
+     "y": 90
+    },
+    "data": {
+     "kind": "scope",
+     "inputs": 2,
+     "name": "Scope"
+    }
+   }
+  ],
+  "edges": [
+   {
+    "id": "w-e-0",
+    "source": "w",
+    "target": "e",
+    "sourceHandle": "out",
+    "targetHandle": "in0",
+    "type": "sig",
+    "markerEnd": {
+     "type": "arrowclosed",
+     "width": 14,
+     "height": 14,
+     "color": "rgb(148,163,184)"
+    }
+   },
+   {
+    "id": "e-R-0",
+    "source": "e",
+    "target": "R",
+    "sourceHandle": "out",
+    "targetHandle": "in0",
+    "type": "sig",
+    "markerEnd": {
+     "type": "arrowclosed",
+     "width": 14,
+     "height": 14,
+     "color": "rgb(148,163,184)"
+    }
+   },
+   {
+    "id": "R-G-0",
+    "source": "R",
+    "target": "G",
+    "sourceHandle": "out",
+    "targetHandle": "in0",
+    "type": "sig",
+    "markerEnd": {
+     "type": "arrowclosed",
+     "width": 14,
+     "height": 14,
+     "color": "rgb(148,163,184)"
+    }
+   },
+   {
+    "id": "G-e-1",
+    "source": "G",
+    "target": "e",
+    "sourceHandle": "out",
+    "targetHandle": "in1",
+    "type": "sig",
+    "markerEnd": {
+     "type": "arrowclosed",
+     "width": 14,
+     "height": 14,
+     "color": "rgb(148,163,184)"
+    }
+   },
+   {
+    "id": "G-sc-0",
+    "source": "G",
+    "target": "sc",
+    "sourceHandle": "out",
+    "targetHandle": "in0",
+    "type": "sig",
+    "markerEnd": {
+     "type": "arrowclosed",
+     "width": 14,
+     "height": 14,
+     "color": "rgb(148,163,184)"
+    }
+   },
+   {
+    "id": "w-sc-1",
+    "source": "w",
+    "target": "sc",
+    "sourceHandle": "out",
+    "targetHandle": "in1",
+    "type": "sig",
+    "markerEnd": {
+     "type": "arrowclosed",
+     "width": 14,
+     "height": 14,
+     "color": "rgb(148,163,184)"
+    }
+   }
+  ],
+  "settings": {
+   "tEnd": 6,
+   "steps": 2000,
+   "src": "w",
+   "out": "G"
+  }
+ }
+}
