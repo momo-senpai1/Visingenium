@@ -1,5 +1,10 @@
 # Visingenium
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="animation/logo-dark.gif">
+  <img src="animation/logo-light.gif" alt="Visingenium" width="600">
+</picture>
+
 Browser-based simulators for the core engineering lectures. The start page
 (`#/`) leads to eight areas:
 
