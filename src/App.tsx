@@ -55,7 +55,23 @@ const EE_PAGES: Partial<Record<Route, LazyExoticComponent<ComponentType>>> = {
   'ee-transistor': lazy(() => import('@/pages/circuits/TransistorPage')),
   'ee-motor': lazy(() => import('@/pages/circuits/MotorPage')),
 };
-
+/** Engineering Mechanics 1–3 explainers */
+const MECH_PAGES: Partial<Record<Route, LazyExoticComponent<ComponentType>>> = {
+  'mech-forces': lazy(() => import('@/pages/mechanics/ForcesPage')),
+  'mech-friction': lazy(() => import('@/pages/mechanics/FrictionPage')),
+  'mech-centroid': lazy(() => import('@/pages/mechanics/CentroidPage')),
+  'mech-virtual-work': lazy(() => import('@/pages/mechanics/VirtualWorkPage')),
+  'mech-stress': lazy(() => import('@/pages/mechanics/StressPage')),
+  'mech-bar': lazy(() => import('@/pages/mechanics/BarPage')),
+  'mech-thinwalled': lazy(() => import('@/pages/mechanics/ThinWalledPage')),
+  'mech-energy': lazy(() => import('@/pages/mechanics/EnergyPage')),
+  'mech-buckling': lazy(() => import('@/pages/mechanics/BucklingPage')),
+  'mech-kinematics': lazy(() => import('@/pages/mechanics/KinematicsPage')),
+  'mech-rigid': lazy(() => import('@/pages/mechanics/RigidBodyPage')),
+  'mech-kinetics': lazy(() => import('@/pages/mechanics/KineticsPage')),
+  'mech-impact': lazy(() => import('@/pages/mechanics/ImpactPage')),
+  'mech-vibration': lazy(() => import('@/pages/mechanics/VibrationPage')),
+};
 
 export default function App() {
   const { route, params } = useRoute();
@@ -73,9 +89,9 @@ export default function App() {
           ) : (
             <Suspense fallback={<div className="glass flex-1 animate-pulse" aria-busy="true" />}>
               <main key={route} className="relative min-h-0 flex-1 overflow-y-auto">
-                {EE_PAGES[route] ? (
+                {EE_PAGES[route] || MECH_PAGES[route] ? (
                   (() => {
-                    const Page = EE_PAGES[route]!;
+                    const Page = (EE_PAGES[route] ?? MECH_PAGES[route])!;
                     return <Page />;
                   })()
                 ) : route === 'mccabe-thiele' ? (
