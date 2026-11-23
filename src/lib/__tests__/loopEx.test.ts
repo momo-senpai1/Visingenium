@@ -3,7 +3,7 @@ import { freq, margins } from '@/engine/control/poly';
 import { reduceLoopEx, splitSpec } from '../loopEx';
 import { nyquist } from '../nyquist';
 
-describe('exam extras for the control loop', () => {
+describe('extras for the control loop', () => {
   it('ideal PD: phase lift arctan(Tv ω) without filter', () => {
     const { spec } = splitSpec({ kind: 'PD', K: 2, Td: 2 / 3, ideal: true });
     const r = reduceLoopEx({ sign: -1, feedback: [], forward: [{ id: 'c', name: 'R', spec }] });
@@ -18,13 +18,13 @@ describe('exam extras for the control loop', () => {
     expect(f.re).toBeCloseTo(2, 9);
     expect(f.im).toBeCloseTo(0.6, 9);
   });
-  it('pure dead time block adds to the loop (F22 setting)', () => {
+  it('pure dead time block adds to the loop (PI + PT1 + dead time)', () => {
     const loop = {
       sign: -1 as const,
       feedback: [],
       forward: [
         { id: 'c', name: 'R', spec: { kind: 'PI' as const, K: 1, Ti: 1 } },
-        { id: 'g', name: 'G', spec: { kind: 'PT1' as const, K: 5, T: 5 } },
+        { id: 'g', name: 'G', spec: { kind: 'PT1' as const, K: 4, T: 4 } },
         { id: 'd', name: 'Tt', spec: { kind: 'custom' as const, num: [1], den: [1], Tt: 0.5 } },
       ],
     };

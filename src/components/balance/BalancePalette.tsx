@@ -155,7 +155,7 @@ export function BalancePalette() {
           onClick={loadExample}
           className="block w-full rounded border border-white/[0.08] px-2 py-1.5 text-left text-[11px] text-plant-200 transition-colors hover:border-signal-liquid/40 hover:text-signal-liquid"
         >
-          {t('THF pressure-swing distillation (exercise)')}
+          {t('THF pressure-swing distillation (example)')}
         </button>
         <button
           type="button"

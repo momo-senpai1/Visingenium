@@ -1,5 +1,5 @@
 /**
- * The quantities old RWTH "Regelungstechnik" exams ask for (Aufgabe 2, frequency domain), read off
+ * Typical frequency-domain quantities of a control loop, read off
  * the open loop L(jω): applicability of the simplified Nyquist criterion, phase/gain margin with
  * the gain margin as a factor A_R, static control factor R, maximum dead time, gain for a target
  * phase margin, Ziegler–Nichols settings and the phase lost by a digital (sampled) controller.
@@ -15,7 +15,7 @@ import { t } from '@/i18n';
 
 const r2d = (r: number) => (r * 180) / Math.PI;
 
-export function ExamChecks({ L }: { L: TF }) {
+export function LoopChecks({ L }: { L: TF }) {
   const [target, setTarget] = useState(45);
   const [Ts, setTs] = useState(0.1);
   const [arT, setArT] = useState(2);
@@ -46,7 +46,7 @@ export function ExamChecks({ L }: { L: TF }) {
   const TtForAR = pA && pA.deg > -180 ? ((pA.deg + 180) * Math.PI) / 180 / pA.w : null;
   const n = (v: number | null | undefined, d = 3) => (v === null || v === undefined || !Number.isFinite(v) ? '–' : nf(v, d));
   return (
-    <Card title="Exam values (frequency domain)">
+    <Card title="Key values (frequency domain)">
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="space-y-2 text-[11px] leading-relaxed text-plant-300">
           <p className="tag text-plant-500">{t('Simplified Nyquist criterion')}</p>

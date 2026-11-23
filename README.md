@@ -346,10 +346,10 @@ exercise the way it is solved on paper:
    handles several feeds with their own q, a total or partial condenser, and
    runs below the diagonal when the key component leaves at the bottom.
 
-The bundled example is the RWTH AVT exercise on THF/H₂O/butanediol
-pressure-swing distillation. Its x–y curves were extracted from the vector
-graphics of the exercise sheet. The drawing and the specifications are stored
-in the browser.
+The bundled example is a THF/H₂O/butanediol pressure-swing distillation with
+illustrative numbers. Its x–y curves for THF/water at 10 and 20 bar are
+tabulated y*(x) presets (`engine/balance/columnMT.ts`). The drawing and the
+specifications are stored in the browser.
 
 ### Theme and languages
 
@@ -394,9 +394,9 @@ in the browser.
 - **Azeotropes:** specifications must lie on one side; above the azeotrope the
   column is solved mirrored (x′ = 1 − x) and drawn under the diagonal.
 - **Shortcuts (constant α):** Fenske N_min, Underwood v_min (binary, exact θ),
-  Gilliland via Liddle's fit (slide misprints corrected) with an N–v chart,
+  Gilliland via Liddle's fit with an N–v chart,
   asymptotes and the 1.05–1.5·v_min design band.
-- The unit tests reproduce every reference value of the workbench specification
+- The unit tests check the workbench against reference values
   (N = 15.01, v_min = 2.123, Gilliland 15.62, the feed-stage table, Murphree cases, …).
 
 ### Batch distillation workbench (`engine/batch.ts`)
@@ -540,6 +540,24 @@ src/
   components/               palette, inspector (shadcn sliders), status bar, canvas
   components/analysis/      McCabe–Thiele, T–x–y, stage table, KPI panel + chart data builders
 ```
+
+## Scientific sources and validation
+
+Every model is implemented from published equations and data. [`SOURCES.md`](SOURCES.md)
+lists, per module, the method, its source (journal paper, textbook or handbook), the
+origin of each data set, the validation results and the known limitations.
+
+Main sources: IAPWS-IF97 and IAPWS SR1-86 (water and steam), Perry's Chemical Engineers'
+Handbook and Dean's Lange's Handbook (VLE data, Antoine constants), Treybal (extraction
+data), Hansen et al. 1991 (UNIFAC), Sander 2015 (Henry constants), VDI-Wärmeatlas and
+Incropera (heat transfer), Ebers–Moll and Shichman–Hodges (transistor models), Kalman 1960.
+
+Validation is part of the test suite (`npm test`) and runs in CI on every push, e.g. the
+benzene/toluene bubble and dew points, the predicted ternary azeotrope (57.3 °C vs. ≈ 57.5 °C
+in the literature) and the steam properties (deviation below 0.1 %).
+
+Visingenium is an educational and pre-design tool, not validated for plant design or
+safety-relevant sizing.
 
 ## References
 

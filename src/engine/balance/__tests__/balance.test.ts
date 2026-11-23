@@ -5,7 +5,7 @@ import { thfPressureSwing } from '../examples';
 import { nKey, qKey, solveBalance, xKey } from '../solver';
 import type { BProblem } from '../types';
 
-describe('balance solver — VR 02 THF pressure-swing example', () => {
+describe('balance solver — THF pressure-swing example', () => {
   const { problem } = thfPressureSwing();
   const r = solveBalance(problem);
   const v = (k: string) => r.values.get(k)!;
@@ -16,20 +16,20 @@ describe('balance solver — VR 02 THF pressure-swing example', () => {
     expect(r.checks.length).toBeGreaterThan(10);
     expect(r.checks.every((c) => c.ok)).toBe(true);
   });
-  it('column 1 removes all butanediol (part b)', () => {
-    expect(v(nKey('B1'))).toBeCloseTo(100, 9);
-    expect(v(nKey('D1'))).toBeCloseTo(900, 9);
-    expect(v(xKey('D1', 0))).toBeCloseTo(5 / 6, 9);
+  it('column 1 removes all butanediol', () => {
+    expect(v(nKey('B1'))).toBeCloseTo(80, 9);
+    expect(v(nKey('D1'))).toBeCloseTo(720, 9);
+    expect(v(xKey('D1', 0))).toBeCloseTo(7 / 9, 9);
   });
-  it('pressure-swing flows (part c)', () => {
-    expect(v(nKey('B2'))).toBeCloseTo(74100 / 97, 6);
-    expect(v(nKey('B3'))).toBeCloseTo(900 - 74100 / 97, 6);
-    expect(v(nKey('D3'))).toBeCloseTo(222.268, 2);
-    expect(v(nKey('D2'))).toBeCloseTo(358.351, 2);
-    expect(v(xKey('B3', 0))).toBeCloseTo(0.01, 12);
+  it('pressure-swing flows', () => {
+    expect(v(nKey('B2'))).toBeCloseTo(10912 / 19, 6);
+    expect(v(nKey('B3'))).toBeCloseTo(720 - 10912 / 19, 6);
+    expect(v(nKey('D3'))).toBeCloseTo(335.707, 2);
+    expect(v(nKey('D2'))).toBeCloseTo(481.391, 2);
+    expect(v(xKey('B3', 0))).toBeCloseTo(0.02, 12);
   });
-  it('heat loss condenses part of the vapour (part e): q = Q/(Δh·ṅ)', () => {
-    expect(v(qKey('F3'))).toBeCloseTo(16500 / 90 / v(nKey('D2')), 9);
+  it('heat loss condenses part of the vapour: q = Q/(Δh·ṅ)', () => {
+    expect(v(qKey('F3'))).toBeCloseTo(15000 / 90 / v(nKey('D2')), 9);
   });
   it('takes the envelope around columns 2 and 3 for the recycle, like on paper', () => {
     const sys = r.steps.find((s) => s.solved.some((x) => x.key === nKey('B2')))!;
@@ -42,8 +42,8 @@ describe('balance solver — VR 02 THF pressure-swing example', () => {
     const [k2, k3] = cols.map((c) => c.result!);
     expect(k2!.ok).toBe(true);
     expect(k2!.mirrored).toBe(true);
-    expect(k2!.N).toBeGreaterThan(3);
-    expect(k2!.N).toBeLessThan(6);
+    expect(k2!.N).toBeGreaterThan(2);
+    expect(k2!.N).toBeLessThan(5);
     expect(k3!.ok).toBe(true);
     expect(k3!.mirrored).toBe(false);
     expect(k3!.N).toBeGreaterThan(1.5);

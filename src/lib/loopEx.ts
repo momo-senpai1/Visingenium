@@ -1,5 +1,5 @@
 /**
- * Exam-style extras for the control-loop page, layered on top of the loop reducer:
+ * Extras for the control-loop page, layered on top of the loop reducer:
  *  - ideal PD / PID controllers K(1 + T_d s), K(1 + 1/(T_i s) + T_d s) without derivative filter,
  *  - a pure dead time (or any b(s)/a(s)·e^{−sTt}) as a "custom" block with T_t.
  * Ideal controllers are handed to the reducer as exact polynomials; dead times of blocks in the

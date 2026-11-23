@@ -144,7 +144,7 @@ export const KU: Record<string, string> = {
   "Apparatus (black box)": "Alav (qutiya reş)",
   "top": "jor",
   "bottom": "bin",
-  "THF pressure-swing distillation (exercise)": "Distîlasyona THF bi guhertina pestanê (mînak)",
+  "THF pressure-swing distillation (example)": "Distîlasyona THF bi guhertina pestanê (mînak)",
   "from → to": "ji → bo",
   "pure {comp}": "{comp} paqij",
   "all unknown": "hemû nenas",
