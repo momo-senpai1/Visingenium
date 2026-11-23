@@ -121,14 +121,61 @@ Code: `engine/fluid/pipe.ts`
 
 ## 8. Mechanics
 
-Code: `engine/mechanics/*.ts`
+Code: `engine/mechanics/beam.ts`, `truss.ts`, `torsion.ts`, `statics.ts`,
+`elasto.ts`, `dynamics.ts`; pages in `pages/mechanics/*.tsx`
+
+Sign conventions follow Gross et al. throughout: z downward in cross-sections,
+product moment I_yz = −∫ y z dA, internal forces positive on the positive cut face.
+
+**Engineering Mechanics 1: statics**
 
 | Method | Source |
 |---|---|
 | Sign conventions, beam theory, N/Q/M diagrams, bending stress | Gross, Hauger, Schröder & Wall, *Technische Mechanik* 1–2 (Springer) |
 | Euler–Bernoulli finite elements for beams | Bathe, *Finite Element Procedures*; Przemieniecki, *Theory of Matrix Structural Analysis* |
 | Truss: direct stiffness method, determinacy check 2k = s + r | Gross et al.; Przemieniecki |
+| Plane force systems: resultant, moment about a point, line of action, force polygon | Gross et al., *Technische Mechanik* 1; Hibbeler, *Engineering Mechanics: Statics* |
+| Static and sliding friction F_R ≤ μ₀·F_N, self-locking tan α ≤ μ₀ | Coulomb (1785); Gross et al., *Technische Mechanik* 1 |
+| Rope friction S₂ = S₁·e^(μα) | Euler (1762); Eytelwein (1808); Gross et al., *Technische Mechanik* 1 |
+| Centroid of composite areas (holes as negative areas) | Gross et al., *Technische Mechanik* 1 |
+| Principle of virtual work, toggle press H = F/(2 tan α) | Gross et al., *Technische Mechanik* 1; Hibbeler, *Statics* (chapter on virtual work) |
+
+**Engineering Mechanics 2: strength of materials**
+
+| Method | Source |
+|---|---|
+| Plane stress transformation, Mohr's circle, principal stresses | Mohr (1882); Gross et al., *Technische Mechanik* 2 |
+| Equivalent stress (von Mises) | von Mises (1913) |
+| Hooke's law, thermal strain, statically indeterminate bars (compatibility condition) | Gross et al., *Technische Mechanik* 2; Hibbeler, *Mechanics of Materials* |
+| Second moments of area, parallel-axis theorem (Steiner), principal axes, unsymmetric bending σ = M_y(I_z z + I_yz y)/(I_y I_z − I_yz²) | Gross et al., *Technische Mechanik* 2 |
 | Torsion of shafts, τ = M_t/W_t, φ = M_t·L/(G·I_p) | Gross et al., *Technische Mechanik* 2 |
+| Thin-walled closed sections τ = M_t/(2A_m t), I_T = 4A_m²/∮ds/t | Bredt (1896); Gross et al., *Technische Mechanik* 2 |
+| Thin-walled open sections I_T = ⅓ Σ s t³ | Gross et al., *Technische Mechanik* 2 |
+| Shear stress from transverse force τ = Q·S/(I·t), thin-walled I-section | Gross et al., *Technische Mechanik* 2; Hibbeler, *Mechanics of Materials* |
+| Shear centre of a thin-walled channel e = 3b²/(h + 6b) | Gross et al., *Technische Mechanik* 2; Hibbeler, *Mechanics of Materials* |
+| Strain energy, Castigliano's theorem f = ∂U/∂F | Castigliano (1879); Gross et al., *Technische Mechanik* 2 |
+| Reciprocity of deflections | Maxwell (1864); Betti (1872) |
+| Euler buckling F_K = π²EI/l_K², four Euler cases, slenderness λ = l_K/i, λ_P = π√(E/σ_P) | Euler (1744); Gross et al., *Technische Mechanik* 2 |
+| Inelastic buckling below λ_P (only named as a warning, not computed) | Tetmajer (1896) |
+
+**Engineering Mechanics 3: dynamics**
+
+| Method | Source |
+|---|---|
+| Particle kinematics in Cartesian, polar and natural coordinates, a_t = v̇, a_n = v²/ρ | Gross et al., *Technische Mechanik* 3; Hibbeler, *Engineering Mechanics: Dynamics* |
+| Rigid-body kinematics, instantaneous centre, slider-crank | Gross et al., *Technische Mechanik* 3 |
+| Relative motion, Coriolis acceleration 2·Ω×v_rel | Coriolis (1835); Gross et al., *Technische Mechanik* 3 |
+| Newton's law, d'Alembert inertia forces | d'Alembert (1743); Gross et al., *Technische Mechanik* 3 |
+| Centre-of-mass and angular-momentum theorems, rolling with and without slipping | Gross et al., *Technische Mechanik* 3 |
+| Mass moments of inertia (sphere, cylinder, hollow sphere, ring), parallel-axis theorem | Gross et al., *Technische Mechanik* 3 |
+| Work and energy theorem, conservation of energy | Gross et al., *Technische Mechanik* 3 |
+| Straight central impact, coefficient of restitution e, energy loss | Newton, *Principia* (1687); Gross et al., *Technische Mechanik* 3 |
+| Single-degree-of-freedom oscillator: ω₀, δ, damping ratio D (Lehr), magnification function, phase lag | Magnus, Popp & Sextro, *Schwingungen* (Springer); Gross et al., *Technische Mechanik* 3 |
+| Time response of the forced oscillator (classical Runge–Kutta, 4th order) | Press et al., *Numerical Recipes* |
+
+Material values on the bar page (E, α_T, yield strength for steel, aluminium,
+copper) are rounded typical values for teaching, as found in *Dubbel*; they are
+not values for a specific alloy.
 
 ## 9. Control engineering, filters, signals
 
@@ -173,6 +220,7 @@ Code: `engine/circuits/*.ts`
 | UNIFAC group parameters | Hansen et al. (1991) | `engine/extraction/unifac.ts` |
 | Azeotropes used to fit Wilson parameters | Literature azeotrope data (Gmehling et al.) | `engine/propertyPackage.ts`, `ternary/model.ts` |
 | THF/H₂O/butanediol balance example | Illustrative process and numbers; THF/water y*(x) tables at 10 and 20 bar | `engine/balance/examples.ts`, `columnMT.ts` |
+| Material values for steel, aluminium, copper (E, α_T, yield strength) | Rounded typical values (Dubbel) | `pages/mechanics/BarPage.tsx` |
 
 ## 12. Validation
 
@@ -189,6 +237,7 @@ every push.
 | Exergy balance of cycles | Supplied exergy = net work + losses | Tested for every cycle |
 | UNIFAC | Infinite-dilution γ∞ and mutual solubilities against literature; tie lines verified isoactive | Tests in `engine/extraction/__tests__` |
 | Maxwell construction | Equal-area rule against equal fugacity | Verified numerically |
+| Mechanics 1–3 explainers | Closed-form checks: couple without resultant, I of rectangle, I- and box sections, toggle press against cutting free, Mohr invariants and τ = 0 in the principal directions, clamped bar thermal stress −E·α_T·ΔT, Bredt, Maxwell reciprocity, Euler case 4 = 4 × case 2, slider-crank instantaneous centre against numerical differentiation, rolling a = g sin α/(1 + k), momentum and e in impact, V(η = 1) = 1/(2D), RK4 period | 20 tests in `engine/mechanics/__tests__/tm.test.ts` |
 | Robustness | Every solver fed with 0, negative, huge, tiny, NaN and ±∞ inputs | No throw, no hang (`src/__tests__/robustness.test.ts`) |
 
 ## 13. Scope and limitations
@@ -256,6 +305,25 @@ Stated openly so the results are not over-read:
 - Wilson, G. M. (1964). Vapor–liquid equilibrium. XI. A new expression for the excess free energy of mixing. *J. Am. Chem. Soc.* 86, 127–130.
 - IAPWS (1992). *Revised Supplementary Release on Saturation Properties of Ordinary Water Substance* (SR1-86).
 
+**Original works in mechanics**
+
+<!-- TODO(author): check volume and page numbers of Euler (1762), Eytelwein (1808), Bredt (1896), Betti (1872) and Tetmajer (1896) against the originals. -->
+
+- Betti, E. (1872). Teoria dell'elasticità. *Il Nuovo Cimento* 7–8.
+- Bredt, R. (1896). Kritische Bemerkungen zur Drehungselastizität. *Zeitschrift des VDI* 40, 785–790 and 813–817.
+- Castigliano, A. (1879). *Théorie de l'équilibre des systèmes élastiques et ses applications.* Turin: Negro.
+- Coriolis, G.-G. (1835). Sur les équations du mouvement relatif des systèmes de corps. *Journal de l'École Polytechnique* 15, 142–154.
+- Coulomb, C. A. (1785). Théorie des machines simples. *Mémoires de mathématique et de physique présentés à l'Académie Royale des Sciences* 10, 161–332.
+- d'Alembert, J. le R. (1743). *Traité de dynamique.* Paris: David.
+- Euler, L. (1744). *Methodus inveniendi lineas curvas maximi minimive proprietate gaudentes*, appendix I: De curvis elasticis. Lausanne and Geneva: Bousquet.
+- Euler, L. (1762). Remarques sur l'effet du frottement dans l'équilibre. *Mémoires de l'Académie des Sciences de Berlin* 18.
+- Eytelwein, J. A. (1808). *Handbuch der Statik fester Körper.* Berlin: Reimer.
+- Maxwell, J. C. (1864). On the calculation of the equilibrium and stiffness of frames. *Phil. Mag.* 27, 294–299.
+- von Mises, R. (1913). Mechanik der festen Körper im plastisch-deformablen Zustand. *Nachr. Ges. Wiss. Göttingen, Math.-Phys. Kl.*, 582–592.
+- Mohr, O. (1882). Über die Darstellung des Spannungszustandes und des Deformationszustandes eines Körperelementes. *Der Civilingenieur* 28, 113–156.
+- Newton, I. (1687). *Philosophiæ Naturalis Principia Mathematica.* London: Royal Society.
+- Tetmajer, L. von (1896). *Die Gesetze der Knickungs- und der zusammengesetzten Druckfestigkeit der technisch wichtigsten Baustoffe.* Zürich.
+
 **Books and handbooks**
 
 - Atkins, P. & de Paula, J. *Physical Chemistry.* Oxford University Press.
@@ -270,11 +338,14 @@ Stated openly so the results are not over-read:
 - Doherty, M. F. & Malone, M. F. (2001). *Conceptual Design of Distillation Systems.* McGraw-Hill.
 - Franklin, G. F., Powell, J. D. & Workman, M. L. (1998). *Digital Control of Dynamic Systems*, 3rd ed. Addison-Wesley.
 - Gmehling, J. et al. *Azeotropic Data.* Wiley-VCH / DECHEMA.
-- Gross, D., Hauger, W., Schröder, J. & Wall, W. A. *Technische Mechanik* 1–2. Springer.
+- Gross, D., Hauger, W., Schröder, J. & Wall, W. A. *Technische Mechanik* 1 (Statik), 2 (Elastostatik), 3 (Kinetik). Springer.
+- Grote, K.-H. & Feldhusen, J. (eds.). *Dubbel – Taschenbuch für den Maschinenbau.* Springer.
 - Hambley, A. R. *Electrical Engineering: Principles and Applications.* Pearson.
+- Hibbeler, R. C. *Engineering Mechanics: Statics*; *Engineering Mechanics: Dynamics*; *Mechanics of Materials.* Pearson.
 - Incropera, F. P., DeWitt, D. P., Bergman, T. L. & Lavine, A. S. *Fundamentals of Heat and Mass Transfer.* Wiley.
 - Kays, W. M. & London, A. L. (1984). *Compact Heat Exchangers*, 3rd ed. McGraw-Hill.
 - Lunze, J. *Regelungstechnik 1.* Springer.
+- Magnus, K., Popp, K. & Sextro, W. *Schwingungen.* Springer Vieweg.
 - McCabe, W. L., Smith, J. C. & Harriott, P. (2005). *Unit Operations of Chemical Engineering*, 7th ed. McGraw-Hill.
 - Ogata, K. *Modern Control Engineering.* Pearson.
 - Oppenheim, A. V. & Schafer, R. W. *Discrete-Time Signal Processing.* Pearson.
@@ -292,4 +363,4 @@ Stated openly so the results are not over-read:
 - Welch, G. & Bishop, G. (2006). *An Introduction to the Kalman Filter.* UNC Chapel Hill, TR 95-041.
 - Zverev, A. I. (1967). *Handbook of Filter Synthesis.* Wiley.
 
-**Topics follow typical lectures in:** heat and mass transfer (TU Darmstadt, TU München, Universität Siegen) and the usual undergraduate engineering syllabi.
+**Topics follow typical lectures in:** heat and mass transfer (TU Darmstadt, TU München, Universität Siegen), Technische Mechanik 1–3 and the usual undergraduate engineering syllabi.
