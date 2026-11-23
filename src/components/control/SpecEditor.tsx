@@ -72,7 +72,7 @@ export function SpecEditor({ spec, onChange: rawChange, kinds, extras }: { spec:
       {extras && (spec.kind === 'PD' || spec.kind === 'PID') && (
         <label className="flex items-center gap-1.5 text-[10px] text-plant-400">
           <input type="checkbox" checked={!!(spec as BlockSpec & { ideal?: boolean }).ideal} onChange={(e) => onChange({ ...spec, ideal: e.target.checked } as BlockSpec)} />
-          {t('ideal (no derivative filter), as in the exams')}
+          {t('ideal (no derivative filter), as in textbooks')}
         </label>
       )}
       {extras === 'all' && spec.kind === 'custom' && (

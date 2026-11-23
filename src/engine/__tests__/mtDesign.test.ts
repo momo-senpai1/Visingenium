@@ -1,5 +1,5 @@
 /**
- * Reference values from the McCabe–Thiele workbench specification
+ * Reference values for a binary McCabe–Thiele design
  * (α = 2, v = 3, x_F = 0.5, q = 0.5, x_D = 0.95, x_B = 0.05 unless stated).
  */
 import { describe, expect, it } from 'vitest';

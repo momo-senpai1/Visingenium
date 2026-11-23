@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { Tex } from '@/components/balance/Tex';
-import { ExamChecks } from '@/components/control/ExamChecks';
+import { LoopChecks } from '@/components/control/LoopChecks';
 import { ALL, SpecEditor } from '@/components/control/SpecEditor';
 import { StepTutor, type TutorStep } from '@/components/StepTutor';
 import { LineChartBox } from '@/components/heat/charts';
@@ -18,48 +18,48 @@ import { Segmented } from '@/components/ui/segmented';
 import { cn } from '@/lib/utils';
 
 const EXAMPLES: Record<string, { label: string; loop: LoopSpec }> = {
-  examH23: {
-    label: 'Exam example (like RT H23): PI 0.2(1 + 1/(2s)) + PT2 K = 5, ω₀ = 2, D = 1',
+  piPt2: {
+    label: 'Example: PI 0.25(1 + 1/(2s)) + PT2 K = 4, ω₀ = 2, D = 1',
     loop: {
       sign: -1,
       feedback: [],
       forward: [
-        { id: 'c', name: 'R', spec: { kind: 'PI', K: 0.2, Ti: 2 } },
-        { id: 'g', name: 'G', spec: { kind: 'PT2', K: 5, T: 0.5, zeta: 1 } },
+        { id: 'c', name: 'R', spec: { kind: 'PI', K: 0.25, Ti: 2 } },
+        { id: 'g', name: 'G', spec: { kind: 'PT2', K: 4, T: 0.5, zeta: 1 } },
       ],
     },
   },
-  examF22: {
-    label: 'Exam example (like RT F22): PI 1 + 1/s, plant 5/(1 + 5s) with dead time',
+  piDeadTime: {
+    label: 'Example: PI 1 + 1/s, plant 4/(1 + 4s) with dead time',
     loop: {
       sign: -1,
       feedback: [],
       forward: [
         { id: 'c', name: 'R', spec: { kind: 'PI', K: 1, Ti: 1 } },
-        { id: 'g', name: 'G', spec: { kind: 'PT1', K: 5, T: 5 } },
+        { id: 'g', name: 'G', spec: { kind: 'PT1', K: 4, T: 4 } },
         { id: 'd', name: 'Tt', spec: { kind: 'custom', num: [1], den: [1], Tt: 0.5 } },
       ],
     },
   },
-  examH21: {
-    label: 'Exam example (like RT H21): P controller + integrator with all-pass 2(1 − 2s)/(s(1 + 2s))',
+  intAllpass: {
+    label: 'Example: P controller + integrator with all-pass 3(1 − 2s)/(s(1 + 2s))',
     loop: {
       sign: -1,
       feedback: [],
       forward: [
-        { id: 'c', name: 'R', spec: { kind: 'P', K: 0.1036 } },
-        { id: 'g', name: 'G', spec: { kind: 'custom', num: [2, -4], den: [0, 1, 2] } },
+        { id: 'c', name: 'R', spec: { kind: 'P', K: 0.069 } },
+        { id: 'g', name: 'G', spec: { kind: 'custom', num: [3, -6], den: [0, 1, 2] } },
       ],
     },
   },
-  examPD: {
-    label: 'Exam example (like RT H25): ideal PD K_R(1 + T_v s), T_v = 2/3 s, on a PT2 plant',
+  idealPd: {
+    label: 'Example: ideal PD K_R(1 + T_v s), T_v = 0.8 s, on a PT2 plant',
     loop: {
       sign: -1,
       feedback: [],
       forward: [
-        { id: 'c', name: 'R', spec: { kind: 'PD', K: 0.5, Td: 0.667, ideal: true } as BlockSpec },
-        { id: 'g', name: 'G', spec: { kind: 'PT2', K: 4, T: 0.6, zeta: 0.4 } },
+        { id: 'c', name: 'R', spec: { kind: 'PD', K: 0.5, Td: 0.8, ideal: true } as BlockSpec },
+        { id: 'g', name: 'G', spec: { kind: 'PT2', K: 3, T: 0.5, zeta: 0.5 } },
       ],
     },
   },
@@ -388,7 +388,7 @@ export default function ControlLoopPage() {
             </p>
           </Card>
         </div>
-        <ExamChecks L={L} />
+        <LoopChecks L={L} />
         <Card title="Routh–Hurwitz criterion">
           <div className="text-[13px] text-plant-100">
             <Tex block math={`\\text{${t('characteristic polynomial')}}:\\ ${tfTex({ num: T.den, den: [1] }).replace(/\\frac\{(.*)\}\{1\}/, '$1')} = 0`} />

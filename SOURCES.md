@@ -172,7 +172,7 @@ Code: `engine/circuits/*.ts`
 | LLE tie lines | Treybal, *Mass-Transfer Operations* | `engine/extraction/lle.ts` |
 | UNIFAC group parameters | Hansen et al. (1991) | `engine/extraction/unifac.ts` |
 | Azeotropes used to fit Wilson parameters | Literature azeotrope data (Gmehling et al.) | `engine/propertyPackage.ts`, `ternary/model.ts` |
-| THF/H₂O/butanediol balance example | RWTH Aachen AVT course exercise; the x–y curves were extracted from the exercise sheet | `engine/balance/examples.ts` |
+| THF/H₂O/butanediol balance example | Illustrative process and numbers; THF/water y*(x) tables at 10 and 20 bar | `engine/balance/examples.ts`, `columnMT.ts` |
 
 ## 12. Validation
 
@@ -184,7 +184,7 @@ every push.
 | Benzene/toluene, 1 atm, z = 0.5 | Bubble point, dew point, vapour composition, mean α against textbook values | 92.1 °C, 98.8 °C, y = 0.714, α̅ = 2.47 |
 | Ethanol/water Wilson fit | Compared with Perry's VLE | Within 0.02 in y; azeotrope at 78.2 °C |
 | Ternary acetone/chloroform/methanol | Predicted saddle azeotrope (not fitted) against the literature | 57.3 °C vs. ≈ 57.5 °C |
-| McCabe–Thiele workbench | Reference values of the course workbench specification | N = 15.01, v_min = 2.123, Gilliland 15.62, feed-stage table, Murphree cases |
+| McCabe–Thiele workbench | Reference values for a binary design (α = 2, x_D = 0.95, x_B = 0.05) | N = 15.01, v_min = 2.123, Gilliland 15.62, feed-stage table, Murphree cases |
 | Steam and saturation properties | Against steam tables | Deviation below 0.1 %; a few % only next to the saturation line above 120 bar (boiler pressure limited to 120 bar) |
 | Exergy balance of cycles | Supplied exergy = net work + losses | Tested for every cycle |
 | UNIFAC | Infinite-dilution γ∞ and mutual solubilities against literature; tie lines verified isoactive | Tests in `engine/extraction/__tests__` |
@@ -292,4 +292,4 @@ Stated openly so the results are not over-read:
 - Welch, G. & Bishop, G. (2006). *An Introduction to the Kalman Filter.* UNC Chapel Hill, TR 95-041.
 - Zverev, A. I. (1967). *Handbook of Filter Synthesis.* Wiley.
 
-**Lecture material used for the choice of topics:** TU Darmstadt (Wärme- und Stoffübertragung), TU München (Heat and Mass Transfer), Universität Siegen, RWTH Aachen (AVT).
+**Topics follow typical lectures in:** heat and mass transfer (TU Darmstadt, TU München, Universität Siegen) and the usual undergraduate engineering syllabi.

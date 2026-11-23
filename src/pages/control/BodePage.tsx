@@ -118,29 +118,29 @@ const PRESETS: Record<string, { label: string; factors: Omit<Factor, 'id'>[] }> 
       { kind: 'delay', v: 1 },
     ],
   },
-  examF23: {
-    label: 'Exam example (like RT F23): PT2 with K = 2, D = 0.2, ω₀ = 1',
+  pt2Example: {
+    label: 'Example: PT2 with K = 2.5, D = 0.25, ω₀ = 1.2',
     factors: [
-      { kind: 'gain', v: 2 },
-      { kind: 'pole2', v: 1, zeta: 0.2 },
+      { kind: 'gain', v: 2.5 },
+      { kind: 'pole2', v: 1.2, zeta: 0.25 },
     ],
   },
-  examF22: {
-    label: 'Exam example (like RT F22): open loop 5(1 + s)/(s(1 + 5s))',
+  openLoopExample: {
+    label: 'Example: open loop 4(1 + s)/(s(1 + 4s))',
     factors: [
-      { kind: 'gain', v: 5 },
+      { kind: 'gain', v: 4 },
       { kind: 'int', v: 0, n: 1 },
       { kind: 'zero', v: 1 },
-      { kind: 'pole', v: 0.2 },
+      { kind: 'pole', v: 0.25 },
     ],
   },
-  examH23: {
-    label: 'Exam example (like RT H23): G₀′ = 0.2(1 + 1/(2s)) · 5·PT2(ω₀ = 2, D = 1)',
+  piPt2Example: {
+    label: 'Example: G₀′ = 0.25(1 + 1/(2s)) · 4·PT2(ω₀ = 2.5, D = 0.8)',
     factors: [
       { kind: 'gain', v: 0.5 },
       { kind: 'int', v: 0, n: 1 },
       { kind: 'zero', v: 0.5 },
-      { kind: 'pole2', v: 2, zeta: 1 },
+      { kind: 'pole2', v: 2.5, zeta: 0.8 },
     ],
   },
   allpass: {
@@ -309,7 +309,7 @@ export default function BodePage() {
                 value={scale}
                 onChange={(v) => setOpt({ scale: v })}
                 options={[
-                  { value: 'abs', label: '|G| log', hint: 'Logarithmic |G| axis as in the RWTH exams: slope −1 per decade = −20 dB/decade' },
+                  { value: 'abs', label: '|G| log', hint: 'Logarithmic |G| axis: slope −1 per decade = −20 dB/decade' },
                   { value: 'db', label: 'dB' },
                 ]}
               />

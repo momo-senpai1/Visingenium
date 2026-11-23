@@ -135,7 +135,7 @@ export function underwood(alpha: number, xF: number, q: number, xD: number): num
   return (alpha * xD) / (alpha - theta) + (1 - xD) / (1 - theta) - 1;
 }
 
-/** Liddle's fit of the Gilliland correlation (slide misprints corrected). */
+/** Liddle's fit of the Gilliland correlation. */
 export function gillilandY(X: number): number {
   if (X <= 0.01) return 1 - 18.5715 * X;
   if (X <= 0.9) return 0.545827 - 0.591422 * X + 0.002743 / X;
