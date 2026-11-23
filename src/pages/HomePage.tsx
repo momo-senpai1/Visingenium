@@ -171,7 +171,7 @@ const AREAS: Area[] = [
   {
     title: 'Mechanics',
     scene: 'mechanics',
-    lead: 'Statics and strength of materials as taught in Engineering Mechanics 1 and 2: support reactions, internal forces, deflection, trusses and torsion.',
+    lead: 'Engineering Mechanics 1–3: statics, strength of materials and dynamics — every topic as an interactive simulation with diagrams and the full solution path.',
     accent: 'var(--sig-heat)',
     icon: (
       <>
@@ -181,21 +181,23 @@ const AREAS: Area[] = [
       </>
     ),
     modules: [
-      {
-        route: 'beam',
-        label: 'Beam',
-        desc: 'Reactions, N/Q/M diagrams, bending stress, deflection curve',
-      },
-      {
-        route: 'truss',
-        label: 'Truss',
-        desc: 'Member forces, tension and compression, determinacy',
-      },
-      {
-        route: 'torsion',
-        label: 'Shaft & torsion',
-        desc: 'Torque diagram, shear stress, angle of twist',
-      },
+      { route: 'mech-forces', label: 'Force systems', desc: 'Resultant, moment, force polygon' },
+      { route: 'beam', label: 'Beam', desc: 'Reactions, N/Q/M diagrams, bending stress, deflection curve' },
+      { route: 'truss', label: 'Truss', desc: 'Member forces, tension and compression, determinacy' },
+      { route: 'mech-centroid', label: 'Centroid & area moments', desc: 'Steiner, principal axes, unsymmetric bending' },
+      { route: 'mech-friction', label: 'Friction', desc: 'Static and sliding friction, rope friction' },
+      { route: 'mech-virtual-work', label: 'Virtual work', desc: 'Forces from δW = 0' },
+      { route: 'mech-stress', label: "Stress & Mohr's circle", desc: 'Principal stresses, equivalent stress' },
+      { route: 'mech-bar', label: 'Tension & compression', desc: "Hooke's law, thermal strain, indeterminate bars" },
+      { route: 'torsion', label: 'Shaft & torsion', desc: 'Torque diagram, shear stress, angle of twist' },
+      { route: 'mech-thinwalled', label: 'Thin-walled profiles', desc: 'Bredt, shear flow, shear centre' },
+      { route: 'mech-energy', label: 'Energy methods', desc: 'Castigliano, Maxwell–Betti' },
+      { route: 'mech-buckling', label: 'Buckling', desc: 'Euler cases, slenderness' },
+      { route: 'mech-kinematics', label: 'Particle kinematics', desc: 'Path, v, a_t and a_n' },
+      { route: 'mech-rigid', label: 'Rigid-body kinematics', desc: 'Instantaneous centre, Coriolis' },
+      { route: 'mech-kinetics', label: 'Kinetics & rolling', desc: "Centre of mass and angular momentum, d'Alembert" },
+      { route: 'mech-impact', label: 'Impact', desc: 'Momentum, coefficient of restitution' },
+      { route: 'mech-vibration', label: 'Vibrations', desc: 'Damping, resonance, magnification' },
     ],
   },
   {

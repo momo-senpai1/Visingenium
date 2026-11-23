@@ -66,9 +66,38 @@ const NAV: Record<Section, (NavItem | NavGroup)[]> = {
     },
   ],
   mechanics: [
-    { route: 'beam', label: 'Beam' },
-    { route: 'truss', label: 'Truss' },
-    { route: 'torsion', label: 'Shaft & torsion' },
+    {
+      label: 'TM 1 · Statics',
+      items: [
+        { route: 'mech-forces', label: 'Force systems' },
+        { route: 'beam', label: 'Beam' },
+        { route: 'truss', label: 'Truss' },
+        { route: 'mech-centroid', label: 'Centroid & area moments' },
+        { route: 'mech-friction', label: 'Friction' },
+        { route: 'mech-virtual-work', label: 'Virtual work' },
+      ],
+    },
+    {
+      label: 'TM 2 · Strength of materials',
+      items: [
+        { route: 'mech-stress', label: "Stress & Mohr's circle" },
+        { route: 'mech-bar', label: 'Tension & compression' },
+        { route: 'torsion', label: 'Shaft & torsion' },
+        { route: 'mech-thinwalled', label: 'Thin-walled profiles' },
+        { route: 'mech-energy', label: 'Energy methods' },
+        { route: 'mech-buckling', label: 'Buckling' },
+      ],
+    },
+    {
+      label: 'TM 3 · Dynamics',
+      items: [
+        { route: 'mech-kinematics', label: 'Particle kinematics' },
+        { route: 'mech-rigid', label: 'Rigid-body kinematics' },
+        { route: 'mech-kinetics', label: 'Kinetics & rolling' },
+        { route: 'mech-impact', label: 'Impact' },
+        { route: 'mech-vibration', label: 'Vibrations' },
+      ],
+    },
   ],
   control: [
     { route: 'control-sim', label: 'Simulator' },
@@ -95,7 +124,7 @@ export const SECTIONS: { id: Section; label: string; home: Route }[] = [
   { id: 'thermal', label: 'Thermal Separation', home: 'flowsheet' },
   { id: 'heat', label: 'Heat & Mass Transfer', home: 'conduction' },
   { id: 'circuits', label: 'Electrical Circuits', home: 'circuits' },
-  { id: 'mechanics', label: 'Mechanics', home: 'beam' },
+  { id: 'mechanics', label: 'Mechanics', home: 'mech-forces' },
   { id: 'control', label: 'Control Engineering', home: 'control-sim' },
   { id: 'thermo', label: 'Thermodynamics', home: 'cycles' },
   { id: 'fluid', label: 'Fluid Mechanics', home: 'pipe' },
