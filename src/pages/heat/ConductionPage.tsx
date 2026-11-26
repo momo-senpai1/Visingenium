@@ -1,10 +1,13 @@
 import { useMemo, useState } from 'react';
 import { Tex } from '@/components/balance/Tex';
 import { LineChartBox } from '@/components/heat/charts';
+import { WallRadiationDiagram } from '@/components/heat/WallRadiationDiagram';
 import { Card, fieldCls, ListEditor, newId, nf, Num, NumRow } from '@/components/mechanics/common';
 import { Segmented } from '@/components/ui/segmented';
 import { Kpi, Notice } from '@/components/workbench/controls';
 import { criticalRadius, solveWall, type Geometry, type Layer } from '@/engine/heat/conduction';
+import { SIGMA } from '@/engine/heat/radiation';
+import { faceFlows, type Optics } from '@/engine/heat/surfaceRadiation';
 import { t } from '@/i18n';
 
 const MATERIALS: [string, number][] = [
@@ -22,6 +25,42 @@ const MATERIALS: [string, number][] = [
   ['Plaster', 0.7],
 ];
 
+/** surface presets (gray: α = ε, ρ = 1 − ε − τ) */
+const SURFACES: [string, Optics][] = [
+  ['Matt, rough (ε 0.9)', { eps: 0.9, tau: 0 }],
+  ['Paint / brick (ε 0.93)', { eps: 0.93, tau: 0 }],
+  ['Oxidised steel (ε 0.8)', { eps: 0.8, tau: 0 }],
+  ['Polished metal (ε 0.05)', { eps: 0.05, tau: 0 }],
+  ['Glass pane (α 0.1, τ 0.8)', { eps: 0.1, tau: 0.8 }],
+];
+
+function SurfaceEditor({ o, setO }: { o: Optics; setO: (o: Optics) => void }) {
+  const idx = SURFACES.findIndex(([, p]) => p.eps === o.eps && p.tau === o.tau);
+  return (
+    <div className="space-y-2">
+      <select
+        aria-label={t('Surface')}
+        className={fieldCls}
+        value={idx >= 0 ? idx : ''}
+        onChange={(e) => {
+          const p = SURFACES[Number(e.target.value)];
+          if (p) setO(p[1]);
+        }}
+      >
+        <option value="">{t('Own')}</option>
+        {SURFACES.map(([n], i) => (
+          <option key={n} value={i}>
+            {t(n)}
+          </option>
+        ))}
+      </select>
+      <NumRow label={t('Emissivity ε = α')} value={o.eps} onChange={(v) => v >= 0 && v + o.tau <= 1 && setO({ ...o, eps: v })} />
+      <NumRow label={t('Transmissivity τ')} value={o.tau} onChange={(v) => v >= 0 && v + o.eps <= 1 && setO({ ...o, tau: v })} />
+      <p className="font-mono text-[10px] text-plant-500">ρ = 1 − ε − τ = {nf(Math.max(0, 1 - o.eps - o.tau), 3)}</p>
+    </div>
+  );
+}
+
 export default function ConductionPage() {
   const [geometry, setGeometry] = useState<Geometry>('plane');
   const [layers, setLayers] = useState<Layer[]>([
@@ -36,6 +75,9 @@ export default function ConductionPage() {
   const [Ta, setTa] = useState(-10);
   const [ai, setAi] = useState(8);
   const [aa, setAa] = useState(25);
+  const [Gout, setGout] = useState(300);
+  const [outer, setOuter] = useState<Optics>({ eps: 0.9, tau: 0 });
+  const [inner, setInner] = useState<Optics>({ eps: 0.9, tau: 0 });
   const switchGeo = (g: Geometry) => {
     setGeometry(g);
     if (g === 'plane') {
@@ -66,6 +108,10 @@ export default function ConductionPage() {
       return { x: s * 1000, y: rr.Q };
     });
   }, [geometry, layers, insul, A, L, di, Ti, Ta, ai, aa]);
+  const Gin = SIGMA * (Ti + 273.15) ** 4;
+  const fo = faceFlows(Gout, outer, r.temps.at(-1)!);
+  const fi = faceFlows(Gin, inner, r.temps[0]!);
+  const tn = (v: number, d = 3) => nf(v, d).replace(',', '{,}');
   const xUnit = geometry === 'plane' ? 'x [mm]' : 'r [mm]';
   const prof = r.profile.map((p) => ({ x: p.x * 1000, y: p.T }));
   const fluidI = geometry === 'plane' ? [{ x: -20, y: Ti }, { x: 0, y: r.temps[0]! }] : [];
@@ -129,6 +175,16 @@ export default function ConductionPage() {
             <p className="text-[10px] text-plant-500">{t('Typical α: still air 5–10, wind 25, water 500–5000, condensing steam 10⁴ W/m²K.')}</p>
           </div>
         </Card>
+        <Card title="Radiation at the surfaces">
+          <div className="space-y-2">
+            <NumRow label={t('Irradiation outside G_a')} unit="W/m²" value={Gout} onChange={(v) => v >= 0 && setGout(v)} />
+            <p className="tag text-plant-400">{t('Outside surface')}</p>
+            <SurfaceEditor o={outer} setO={setOuter} />
+            <p className="tag pt-1 text-plant-400">{t('Inside surface')}</p>
+            <SurfaceEditor o={inner} setO={setInner} />
+            <p className="text-[10px] text-plant-500">{t('Illustration of the radiation balance; the room radiates as a black body at T_i onto the inside surface. The conduction result above does not include it.')}</p>
+          </div>
+        </Card>
       </aside>
 
       <div className="min-w-0 space-y-2">
@@ -149,6 +205,20 @@ export default function ConductionPage() {
             {t('The outer radius ({r} mm) is below the critical insulation radius r_krit = {rc} mm: more insulation increases the heat loss here.', { r: nf(ra * 1000, 1), rc: nf(rc * 1000, 1) })}
           </Notice>
         )}
+        <Card title="Layers and radiation (inside → outside)">
+          <WallRadiationDiagram layers={layers} temps={r.temps} Ti={Ti} Ta={Ta} Gout={Gout} Gin={Gin} outer={outer} inner={inner} />
+          <div className="mt-3 grid gap-x-6 text-[13px] text-plant-100 md:grid-cols-2">
+            <div>
+              <Tex block math={'G = \\rho G + \\alpha G + \\tau G \\qquad \\alpha + \\rho + \\tau = 1 \\qquad \\alpha = \\varepsilon'} />
+              <Tex block math={'E = \\varepsilon\\,\\sigma\\,T_s^4 \\qquad \\dot q_{rad} = \\alpha G - \\varepsilon\\sigma T_s^4'} />
+            </div>
+            <div>
+              <Tex block math={`\\text{${t('outside')}}:\\ E_a = ${tn(outer.eps)}\\cdot 5{,}67\\cdot10^{-8}\\,(${tn(r.temps.at(-1)! + 273.15, 1)})^4 = ${tn(fo.emis, 1)}\\ \\mathrm{W/m^2}`} />
+              <Tex block math={`\\dot q_{rad,a} = ${tn(fo.abs, 1)} - ${tn(fo.emis, 1)} = ${tn(fo.net, 1)}\\ \\mathrm{W/m^2}`} />
+              <Tex block math={`\\text{${t('inside')}}:\\ G_i = \\sigma T_i^4 = ${tn(Gin, 1)}\\ \\mathrm{W/m^2}\\ ,\\quad \\dot q_{rad,i} = ${tn(fi.net, 1)}\\ \\mathrm{W/m^2}`} />
+            </div>
+          </div>
+        </Card>
         <div className="grid gap-2 lg:grid-cols-2">
           <Card title="Temperature profile T(x)">
             <LineChartBox

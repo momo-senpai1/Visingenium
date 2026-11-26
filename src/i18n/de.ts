@@ -1,9 +1,11 @@
 /** German UI strings, keyed by the English source text. */
+import { DE_HEAT } from './de-heat';
 import { DE_MECH } from './de-mechanics';
 
 export const DE: Record<string, string> = {
   // Engineering Mechanics 1–3 explainers (entries below win on duplicates)
   ...DE_MECH,
+  ...DE_HEAT,
   // navigation & shell
   "Impulse response (weighting function)": "Impulsantwort (Gewichtsfunktion)",
   "Step h(t)": "Sprung h(t)",
