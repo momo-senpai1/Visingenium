@@ -1,5 +1,5 @@
 import { ArrowRight } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { AnimatedCanvas } from '@/components/bg/AnimatedCanvas';
 import type { SceneId } from '@/components/bg/scenes';
 import { cn } from '@/lib/utils';
@@ -102,7 +102,7 @@ const AREAS: Area[] = [
   {
     title: 'Electrical Circuits',
     scene: 'circuits',
-    lead: 'Electrical engineering from the ground up: eleven animated explainers from Ohm’s law to the induction motor, and a circuit simulator that computes every node voltage and branch current.',
+    lead: 'Electrical engineering from the ground up: animated explainers from Ohm’s law to the induction motor, and a circuit simulator that computes every node voltage and branch current.',
     accent: 'var(--sig-vapor)',
     icon: <path d="M2 12h4l2-5 3 10 3-10 3 10 2-5h3" />,
     modules: [
@@ -117,49 +117,14 @@ const AREAS: Area[] = [
         desc: 'Charges in motion, potential as colour and height, node and mesh rule',
       },
       {
-        route: 'ee-divider',
-        label: 'Divider & bridge',
-        desc: 'Loaded voltage divider, Wheatstone bridge with meter',
-      },
-      {
-        route: 'ee-rc',
-        label: 'RC & RL switching',
-        desc: 'Charging a capacitor, current build-up in a coil, time constant τ',
-      },
-      {
         route: 'ee-phasor',
         label: 'AC & phasors',
         desc: 'Rotating phasor draws the sine; phase shift with R, L, C',
       },
       {
-        route: 'ee-rlc',
-        label: 'Resonant circuit',
-        desc: 'Resonance curve, quality factor, phasor diagram, energy pendulum',
-      },
-      {
-        route: 'ee-power',
-        label: 'AC power',
-        desc: 'p(t) = u·i, P, Q, S, power triangle, power-factor correction',
-      },
-      {
         route: 'ee-3phase',
         label: 'Three-phase',
         desc: 'Three phasors, star and delta, neutral current, √3',
-      },
-      {
-        route: 'ee-transformer',
-        label: 'Transformer',
-        desc: 'Flux in the core, turns ratio, high-voltage transmission',
-      },
-      {
-        route: 'ee-diode',
-        label: 'Diode & rectifier',
-        desc: 'Characteristic, operating point, bridge rectifier, ripple',
-      },
-      {
-        route: 'ee-transistor',
-        label: 'Transistor',
-        desc: 'Load line, operating point, switch and amplifier',
       },
       {
         route: 'ee-motor',
@@ -184,19 +149,8 @@ const AREAS: Area[] = [
       { route: 'mech-forces', label: 'Force systems', desc: 'Resultant, moment, force polygon' },
       { route: 'beam', label: 'Beam', desc: 'Reactions, N/Q/M diagrams, bending stress, deflection curve' },
       { route: 'truss', label: 'Truss', desc: 'Member forces, tension and compression, determinacy' },
-      { route: 'mech-centroid', label: 'Centroid & area moments', desc: 'Steiner, principal axes, unsymmetric bending' },
-      { route: 'mech-friction', label: 'Friction', desc: 'Static and sliding friction, rope friction' },
-      { route: 'mech-virtual-work', label: 'Virtual work', desc: 'Forces from δW = 0' },
       { route: 'mech-stress', label: "Stress & Mohr's circle", desc: 'Principal stresses, equivalent stress' },
-      { route: 'mech-bar', label: 'Tension & compression', desc: "Hooke's law, thermal strain, indeterminate bars" },
-      { route: 'torsion', label: 'Shaft & torsion', desc: 'Torque diagram, shear stress, angle of twist' },
-      { route: 'mech-thinwalled', label: 'Thin-walled profiles', desc: 'Bredt, shear flow, shear centre' },
-      { route: 'mech-energy', label: 'Energy methods', desc: 'Castigliano, Maxwell–Betti' },
-      { route: 'mech-buckling', label: 'Buckling', desc: 'Euler cases, slenderness' },
       { route: 'mech-kinematics', label: 'Particle kinematics', desc: 'Path, v, a_t and a_n' },
-      { route: 'mech-rigid', label: 'Rigid-body kinematics', desc: 'Instantaneous centre, Coriolis' },
-      { route: 'mech-kinetics', label: 'Kinetics & rolling', desc: "Centre of mass and angular momentum, d'Alembert" },
-      { route: 'mech-impact', label: 'Impact', desc: 'Momentum, coefficient of restitution' },
       { route: 'mech-vibration', label: 'Vibrations', desc: 'Damping, resonance, magnification' },
     ],
   },
@@ -324,6 +278,43 @@ const AREAS: Area[] = [
   },
 ];
 
+/** fades and slides its children up from below the first time they scroll into view */
+function Reveal({ children, delay = 0, className }: { children: ReactNode; delay?: number; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [shown, setShown] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === 'undefined') {
+      setShown(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      ([en]) => {
+        if (en?.isIntersecting) {
+          setShown(true);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -8% 0px' },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return (
+    <div
+      ref={ref}
+      style={{ transitionDelay: `${delay}ms` }}
+      className={cn(
+        'transition-[opacity,transform] duration-700 ease-out motion-reduce:transition-none',
+        shown ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0 motion-reduce:translate-y-0 motion-reduce:opacity-100',
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+
 export default function HomePage() {
   const [hero, setHero] = useState<SceneId>('smoke');
   return (
@@ -384,63 +375,67 @@ export default function HomePage() {
       </section>
 
       <div id="areas" className="grid scroll-mt-4 gap-3 md:grid-cols-2 xl:grid-cols-3">
-        {AREAS.map((a) => (
-          <section key={a.title} className="glass flex flex-col overflow-hidden">
-            <div className="relative h-36 border-b border-white/[0.06] bg-plant-950">
-              <AnimatedCanvas scene={a.scene} fps={24} resolution={0.85} pointer="self" />
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-plant-900/70 via-transparent to-transparent" />
-            </div>
-            <div className="flex flex-1 flex-col p-5 pt-4">
-              <div className="mb-2 flex items-center gap-2.5">
-                <span className="grid h-9 w-9 place-items-center rounded-lg border border-white/[0.1] bg-plant-950/70 backdrop-blur">
-                  <svg viewBox="0 0 24 24" className="h-5 w-5 fill-none stroke-[1.5]" style={{ stroke: `rgb(${a.accent})` }} aria-hidden>
-                    {a.icon}
-                  </svg>
-                </span>
-                <h2 className="text-lg font-semibold text-plant-100">{t(a.title)}</h2>
+        {AREAS.map((a, idx) => (
+          <Reveal key={a.title} delay={(idx % 3) * 90} className="flex">
+            <section className="glass flex w-full flex-col overflow-hidden">
+              <div className="relative h-36 border-b border-white/[0.06] bg-plant-950">
+                <AnimatedCanvas scene={a.scene} fps={24} resolution={0.85} pointer="self" />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-plant-900/70 via-transparent to-transparent" />
               </div>
-              <p className="mb-4 text-[12px] leading-relaxed text-plant-400">{t(a.lead)}</p>
-              {/* long lists (electrical engineering) go compact in two columns, description as tooltip */}
-              <ul className={a.modules.length > 7 ? 'mt-auto grid grid-cols-2 gap-1' : 'mt-auto space-y-1'}>
-                {a.modules.map((m) => (
-                  <li key={m.route}>
-                    <button
-                      type="button"
-                      onClick={() => navigate(m.route)}
-                      title={a.modules.length > 7 ? t(m.desc) : undefined}
-                      className={`group flex w-full items-center gap-3 rounded-md border border-white/[0.05] text-left transition-colors hover:border-white/[0.12] hover:bg-white/[0.03] ${a.modules.length > 7 ? 'px-2.5 py-1.5' : 'px-3 py-2'}`}
-                    >
-                      <span className="min-w-0 flex-1">
-                        <span className="block text-[12px] font-medium text-plant-100">{t(m.label)}</span>
-                        {a.modules.length <= 7 && <span className="block text-[10px] text-plant-500">{t(m.desc)}</span>}
-                      </span>
-                      <ArrowRight className="h-3.5 w-3.5 shrink-0 text-plant-500 transition-colors group-hover:text-signal-liquid" />
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </section>
+              <div className="flex flex-1 flex-col p-5 pt-4">
+                <div className="mb-2 flex items-center gap-2.5">
+                  <span className="grid h-9 w-9 place-items-center rounded-lg border border-white/[0.1] bg-plant-950/70 backdrop-blur">
+                    <svg viewBox="0 0 24 24" className="h-5 w-5 fill-none stroke-[1.5]" style={{ stroke: `rgb(${a.accent})` }} aria-hidden>
+                      {a.icon}
+                    </svg>
+                  </span>
+                  <h2 className="text-lg font-semibold text-plant-100">{t(a.title)}</h2>
+                </div>
+                <p className="mb-4 text-[12px] leading-relaxed text-plant-400">{t(a.lead)}</p>
+                {/* long lists (electrical engineering) go compact in two columns, description as tooltip */}
+                <ul className={a.modules.length > 7 ? 'mt-auto grid grid-cols-2 gap-1' : 'mt-auto space-y-1'}>
+                  {a.modules.map((m) => (
+                    <li key={m.route}>
+                      <button
+                        type="button"
+                        onClick={() => navigate(m.route)}
+                        title={a.modules.length > 7 ? t(m.desc) : undefined}
+                        className={`group flex w-full items-center gap-3 rounded-md border border-white/[0.05] text-left transition-colors hover:border-white/[0.12] hover:bg-white/[0.03] ${a.modules.length > 7 ? 'px-2.5 py-1.5' : 'px-3 py-2'}`}
+                      >
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-[12px] font-medium text-plant-100">{t(m.label)}</span>
+                          {a.modules.length <= 7 && <span className="block text-[10px] text-plant-500">{t(m.desc)}</span>}
+                        </span>
+                        <ArrowRight className="h-3.5 w-3.5 shrink-0 text-plant-500 transition-colors group-hover:text-signal-liquid" />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </section>
+          </Reveal>
         ))}
       </div>
-      <footer className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 pt-2 text-[11px] text-plant-500">
-        <span>© 2026 momo-senpai1 · Visingenium</span>
-        <a
-          href="https://github.com/momo-senpai1/Practical-Engineering/blob/main/LICENSE"
-          target="_blank"
-          rel="noreferrer"
-          className="text-plant-400 underline-offset-2 hover:text-signal-liquid hover:underline"
-        >
-          {t('Apache License 2.0')}
-        </a>
-        <a href={`${import.meta.env.BASE_URL}third-party-licenses.txt`} target="_blank" rel="noreferrer" className="text-plant-400 underline-offset-2 hover:text-signal-liquid hover:underline">
-          {t('Third-party licenses')}
-        </a>
-        <span>{t('No tracking · your work stays in your browser')}</span>
-        <button type="button" onClick={() => navigate('privacy')} className="text-plant-400 underline-offset-2 hover:text-signal-liquid hover:underline">
-          {t('Privacy')}
-        </button>
-      </footer>
+      <Reveal>
+        <footer className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 pt-2 text-[11px] text-plant-500">
+          <span>© 2026 momo-senpai1 · Visingenium</span>
+          <a
+            href="https://github.com/momo-senpai1/Practical-Engineering/blob/main/LICENSE"
+            target="_blank"
+            rel="noreferrer"
+            className="text-plant-400 underline-offset-2 hover:text-signal-liquid hover:underline"
+          >
+            {t('Apache License 2.0')}
+          </a>
+          <a href={`${import.meta.env.BASE_URL}third-party-licenses.txt`} target="_blank" rel="noreferrer" className="text-plant-400 underline-offset-2 hover:text-signal-liquid hover:underline">
+            {t('Third-party licenses')}
+          </a>
+          <span>{t('No tracking · your work stays in your browser')}</span>
+          <button type="button" onClick={() => navigate('privacy')} className="text-plant-400 underline-offset-2 hover:text-signal-liquid hover:underline">
+            {t('Privacy')}
+          </button>
+        </footer>
+      </Reveal>
     </div>
   );
 }

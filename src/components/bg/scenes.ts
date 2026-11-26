@@ -121,10 +121,10 @@ export const smoke: Scene = (ctx, e) => {
     const n = fbm(x + 1.7 * wx + t * 0.03, y + 1.7 * wy, 3);
     const lift = Math.exp(-((u - pxn) ** 2 + (v - pyn) ** 2) * 6) * (e.px !== null ? 0.25 : 0);
     const k = clamp01(n * 1.25 - 0.18 + lift);
-    // purple on the left, teal on the right, black core
+    // red on the left, blue on the right, black core
     const side = clamp01(u * 1.2 - 0.1 + (wx - 0.5) * 0.4);
-    const pr = [150, 70, 190];
-    const tl = [40, 190, 170];
+    const pr = [215, 45, 60];
+    const tl = [45, 110, 235];
     const r = lerp(pr[0]!, tl[0]!, side);
     const g = lerp(pr[1]!, tl[1]!, side);
     const b = lerp(pr[2]!, tl[2]!, side);
