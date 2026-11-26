@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { ConvectionDiagram } from '@/components/heat/ConvectionDiagram';
 import { LineChartBox } from '@/components/heat/charts';
 import { Card, fieldCls, nf, NumRow } from '@/components/mechanics/common';
 import { Segmented } from '@/components/ui/segmented';
@@ -89,6 +90,12 @@ export default function ConvectionPage() {
           <Kpi label="α = Nu·λ/L" value={nf(r.alpha, 2)} unit="W/m²K" />
           <Kpi label={t('Heat flow Q̇')} value={nf(r.Q, 1)} unit="W" sub={`A = ${nf(r.A, 3)} m²`} />
         </div>
+        <Card title="What it looks like">
+          <ConvectionDiagram kind={kind} Tw={Tw} Tf={Tf} u={forced ? u : 0.5} Re={r.Re} Ra={r.Ra} deltaEnd={r.local?.at(-1)?.delta} />
+          <p className="text-[10px] text-plant-500">
+            {forced ? t('Dots follow the flow; colour = temperature between fluid and wall. The dashed line is the boundary layer δ(x).') : t('Buoyancy drives the flow: the fluid heated at the wall rises (cooled fluid sinks) and forms the boundary layer or plume.')}
+          </p>
+        </Card>
         <Card title="Correlation">
           <p className="font-mono text-[11px] text-plant-200">{r.correlation}</p>
           <p className="mt-1 text-[10px] text-plant-500">

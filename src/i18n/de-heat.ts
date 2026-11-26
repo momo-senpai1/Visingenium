@@ -1,0 +1,41 @@
+/** German texts of the layer radiation diagram and the convection picture (merged into DE). */
+
+export const DE_HEAT: Record<string, string> = {
+  'Layers and radiation (inside → outside)': 'Schichten und Strahlung (innen → außen)',
+  'Radiation at the surfaces': 'Strahlung an den Oberflächen',
+  'Irradiation outside G_a': 'Einstrahlung außen G_a',
+  'Outside surface': 'Außenoberfläche',
+  'Inside surface': 'Innenoberfläche',
+  Surface: 'Oberfläche',
+  'Emissivity ε = α': 'Emissionsgrad ε = α',
+  'Transmissivity τ': 'Transmissionsgrad τ',
+  'Matt, rough (ε 0.9)': 'Matt, rau (ε 0,9)',
+  'Paint / brick (ε 0.93)': 'Lack / Ziegel (ε 0,93)',
+  'Oxidised steel (ε 0.8)': 'Oxidierter Stahl (ε 0,8)',
+  'Polished metal (ε 0.05)': 'Blankes Metall (ε 0,05)',
+  'Glass pane (α 0.1, τ 0.8)': 'Glasscheibe (α 0,1, τ 0,8)',
+  'Illustration of the radiation balance; the room radiates as a black body at T_i onto the inside surface. The conduction result above does not include it.':
+    'Darstellung der Strahlungsbilanz; der Raum strahlt als schwarzer Körper mit T_i auf die Innenoberfläche. Das Leitungsergebnis oben enthält sie nicht.',
+  inside: 'innen',
+  outside: 'außen',
+  'irradiation G': 'Einstrahlung G',
+  'reflected ρ·G': 'reflektiert ρ·G',
+  'self-emission ε·σ·T⁴': 'Eigenemission ε·σ·T⁴',
+  'absorbed α·G': 'absorbiert α·G',
+  'transmitted τ·G': 'transmittiert τ·G',
+  'arrow width ∝ flux': 'Pfeilbreite ∝ Strom',
+  'What it looks like': 'So sieht es aus',
+  'Flow and boundary layer': 'Strömung und Grenzschicht',
+  'Dots follow the flow; colour = temperature between fluid and wall. The dashed line is the boundary layer δ(x).':
+    'Die Punkte folgen der Strömung; Farbe = Temperatur zwischen Fluid und Wand. Die gestrichelte Linie ist die Grenzschicht δ(x).',
+  'Buoyancy drives the flow: the fluid heated at the wall rises (cooled fluid sinks) and forms the boundary layer or plume.':
+    'Der Auftrieb treibt die Strömung: Das an der Wand erwärmte Fluid steigt auf (abgekühltes sinkt) und bildet Grenzschicht bzw. Fahne.',
+  laminar: 'laminar',
+  'laminar → turbulent': 'laminar → turbulent',
+  'turbulent profile (flat)': 'turbulentes Profil (flach)',
+  'laminar profile (parabola)': 'laminares Profil (Parabel)',
+  'supercritical: narrow wake': 'überkritisch: schmaler Nachlauf',
+  'subcritical: separation at ≈ 80°, wide wake': 'unterkritisch: Ablösung bei ≈ 80°, breiter Nachlauf',
+  'thermal plume rises': 'thermische Fahne steigt auf',
+  'cold fluid sinks': 'kaltes Fluid sinkt',
+};
