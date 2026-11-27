@@ -21,6 +21,7 @@ const MixturesPage = lazy(() => import('@/pages/thermo/MixturesPage'));
 const HumidAirPage = lazy(() => import('@/pages/thermo/HumidAirPage'));
 const PipePage = lazy(() => import('@/pages/fluid/PipePage'));
 const FormulasPage = lazy(() => import('@/pages/tools/FormulasPage'));
+const PilotPlantPage = lazy(() => import('@/pages/tools/PilotPlantPage'));
 const UnitsPage = lazy(() => import('@/pages/tools/UnitsPage'));
 const PrivacyPage = lazy(() => import('@/pages/PrivacyPage'));
 const HomePage = lazy(() => import('@/pages/HomePage'));
@@ -126,6 +127,8 @@ export default function App() {
                   <PipePage />
                 ) : route === 'formulas' ? (
                   <FormulasPage />
+                ) : route === 'pilot-plant' ? (
+                  <PilotPlantPage />
                 ) : route === 'units' ? (
                   <UnitsPage />
                 ) : route === 'circuits' ? (
