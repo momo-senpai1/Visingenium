@@ -1,6 +1,7 @@
 /** German UI strings, keyed by the English source text. */
 import { DE_HEAT } from './de-heat';
 import { DE_MECH } from './de-mechanics';
+import { DE_PILOT } from './de-pilot';
 
 export const DE: Record<string, string> = {
   // Engineering Mechanics 1–3 explainers (entries below win on duplicates)
@@ -2466,6 +2467,7 @@ export const DE: Record<string, string> = {
   'Fluidized-bed dryer': 'Wirbelschichttrockner',
   'Flash (pneumatic) dryer': 'Stromtrockner',
   'Vacuum / freeze dryer (lyophilizer)': 'Vakuum- / Gefriertrockner',
+  ...DE_PILOT,
 };
 
 /**

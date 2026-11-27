@@ -115,6 +115,7 @@ const NAV: Record<Section, (NavItem | NavGroup)[]> = {
   ],
   fluid: [{ route: 'pipe', label: 'Pipe flow & Bernoulli' }],
   tools: [
+    { route: 'pilot-plant', label: 'Pilot plant' },
     { route: 'formulas', label: 'Formula collection' },
     { route: 'units', label: 'Unit converter' },
   ],
@@ -128,7 +129,7 @@ export const SECTIONS: { id: Section; label: string; home: Route }[] = [
   { id: 'control', label: 'Control Engineering', home: 'control-sim' },
   { id: 'thermo', label: 'Thermodynamics', home: 'cycles' },
   { id: 'fluid', label: 'Fluid Mechanics', home: 'pipe' },
-  { id: 'tools', label: 'Tools', home: 'formulas' },
+  { id: 'tools', label: 'Tools', home: 'pilot-plant' },
 ];
 
 const tab = (active: boolean) =>

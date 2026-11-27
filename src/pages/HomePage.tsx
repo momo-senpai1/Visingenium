@@ -265,6 +265,11 @@ const AREAS: Area[] = [
     ),
     modules: [
       {
+        route: 'pilot-plant',
+        label: 'Pilot plant',
+        desc: 'One rectification column: process, thermodynamics, electrics and control in one model',
+      },
+      {
         route: 'formulas',
         label: 'Formula collection',
         desc: 'About 65 formulas with symbols, each linked to its simulator',
