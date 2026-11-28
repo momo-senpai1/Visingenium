@@ -100,10 +100,34 @@ function drawField(ctx: CanvasRenderingContext2D, e: Env, nx: number, ny: number
 }
 
 function text(ctx: CanvasRenderingContext2D, s: string, x: number, y: number, color: string, size = 11, align: CanvasTextAlign = 'left') {
-  ctx.font = `${size}px "JetBrains Mono", ui-monospace, monospace`;
+  const font = (px: number) => `${px}px "JetBrains Mono", ui-monospace, monospace`;
   ctx.fillStyle = color;
-  ctx.textAlign = align;
-  ctx.fillText(s, x, y);
+  if (!/\p{L}_[\p{L}\p{N}]/u.test(s)) {
+    ctx.font = font(size);
+    ctx.textAlign = align;
+    ctx.fillText(s, x, y);
+    return;
+  }
+  // symbols with an index (σ_max, f_c): lowered, smaller index instead of a raw underscore
+  const runs: { t: string; sub: boolean }[] = [];
+  let last = 0;
+  for (const m of s.matchAll(/(\p{L})_([\p{L}\p{N}]+)/gu)) {
+    runs.push({ t: s.slice(last, m.index! + 1), sub: false }, { t: m[2]!, sub: true });
+    last = m.index! + m[0].length;
+  }
+  runs.push({ t: s.slice(last), sub: false });
+  const width = (r: { t: string; sub: boolean }) => {
+    ctx.font = font(r.sub ? size * 0.75 : size);
+    return ctx.measureText(r.t).width;
+  };
+  const total = runs.reduce((a, r) => a + width(r), 0);
+  let cx = align === 'center' ? x - total / 2 : align === 'right' || align === 'end' ? x - total : x;
+  ctx.textAlign = 'left';
+  for (const r of runs) {
+    ctx.font = font(r.sub ? size * 0.75 : size);
+    ctx.fillText(r.t, cx, r.sub ? y + size * 0.25 : y);
+    cx += ctx.measureText(r.t).width;
+  }
 }
 
 // ---------------------------------------------------------------- smoke (home hero, tools)

@@ -1,3 +1,4 @@
+/** @jsxImportSource react */
 /**
  * Plain UI text with formula symbols typeset by KaTeX.
  *
@@ -27,16 +28,36 @@ export function texHtml(math: string, display = false, mathml = true) {
 const BASE: Record<string, string> = { û: '\\hat u', î: '\\hat\\imath', Û: '\\hat U', Î: '\\hat I', ü: '\\ddot u', x̂: '\\hat x' };
 const UNI_SUB: Record<string, string> = { '₀': '0', '₁': '1', '₂': '2', '₃': '3', '₄': '4', '₅': '5', '₆': '6', '₇': '7', '₈': '8', '₉': '9' };
 
-/** one symbol with an index: letter + "_" + index (letters, digits, commas) */
-const SYM = /(?<![\p{L}\p{N}_])([\p{L}][̂̈]?)_(\{[^}]+\}|[\p{L}\p{N},]+)/gu;
+/**
+ * symbol base: one letter (optionally with a hat/dot/umlaut or a Δ/δ/Σ/∂/∇ in front, Δp, ΣF),
+ * or a short dimensionless group (NTU, Bi, Re, Nu)
+ */
+const BASE_ONE = String.raw`[ΔδΣ∂∇]?\p{L}[̂̇̈]?`;
+/** dimensionless groups need an explicit "_" (NTU_OG, Bi_V), so that chemical formulas like CO₂ stay plain text */
+const BASE_RE = String.raw`(?:${BASE_ONE}|(?:[A-Z][a-z]{1,2}|[A-Z]{2,4})(?=_))`;
+/** one symbol with an index: base + "_" + index (letters, digits, commas) */
+const SYM = new RegExp(String.raw`(?<![\p{L}_])(${BASE_RE})_(\{[^}]+\}|[\p{L}\p{N},]+)`, 'gu');
 /** symbol with an index or Unicode subscript digits (I₁, U₂₃, f₀) — used for UI text */
-const SYM_ANY = /(?<![\p{L}\p{N}_])([\p{L}][̂̈]?)(?:_(\{[^}]+\}|[\p{L}\p{N},]+)|([₀-₉]+))(?![\p{L}])/gu;
+const SYM_ANY = new RegExp(String.raw`(?<![\p{L}_])(${BASE_RE})(?:_(\{[^}]+\}|[\p{L}\p{N},]+)|([₀-₉]+))(?![\p{L}])`, 'gu');
 const HAS_SUB = /[_$₀-₉]/;
 /** explicit inline math */
 const DOLLAR = /\$([^$]+)\$/g;
 
+const PREFIX: Record<string, string> = { Δ: '\\Delta ', δ: '\\delta ', Σ: '\\Sigma ', '∂': '\\partial ', '∇': '\\nabla ' };
+const ACCENT: Record<string, string> = { '̂': '\\hat', '̇': '\\dot', '̈': '\\ddot' };
+
+/** LaTeX of a symbol base: Δp → \Delta p, ω̇ → \dot{ω}, NTU → \mathrm{NTU} */
+function baseTex(base: string): string {
+  const known = BASE[base];
+  if (known) return known;
+  const m = /^([ΔδΣ∂∇])?(\p{L})([̂̇̈])?$/u.exec(base);
+  if (!m) return `\\mathrm{${base}}`;
+  const acc = m[3] ? ACCENT[m[3]] : undefined;
+  return (m[1] ? PREFIX[m[1]]! : '') + (acc ? `${acc}{${m[2]}}` : m[2]!);
+}
+
 export function symbolTex(base: string, idx: string) {
-  const b = BASE[base] ?? base;
+  const b = baseTex(base);
   const raw = idx.startsWith('{') ? idx.slice(1, -1) : idx;
   const i = raw.replace(/[₀-₉]/g, (c) => UNI_SUB[c]!);
   // descriptive indices (CE, in, max, L) are set upright, as in DIN 1338
@@ -65,6 +86,19 @@ export function mathPieces(s: string): ({ text: string } | { tex: string; src: s
   if (last < s.length) pushText(s.slice(last));
   return out;
 }
+
+const SUB_CHARS: Record<string, string> = { '0': '₀', '1': '₁', '2': '₂', '3': '₃', '4': '₄', '5': '₅', '6': '₆', '7': '₇', '8': '₈', '9': '₉', a: 'ₐ', e: 'ₑ', h: 'ₕ', i: 'ᵢ', j: 'ⱼ', k: 'ₖ', l: 'ₗ', m: 'ₘ', n: 'ₙ', o: 'ₒ', p: 'ₚ', r: 'ᵣ', s: 'ₛ', t: 'ₜ', u: 'ᵤ', v: 'ᵥ', x: 'ₓ' };
+
+/** plain-text fallback for places that cannot hold markup (<option>): x_N → xₙ, no underscore left */
+export function plainSymbols(s: string): string {
+  const sub = (idx: string) => [...idx.replace(/[{}]/g, '')].map((c) => SUB_CHARS[c] ?? SUB_CHARS[c.toLowerCase()] ?? c).join('');
+  const first = s.replace(SYM_ANY, (m: string, base: string, idx?: string) => (idx ? base + sub(idx) : m));
+  // anything the symbol pattern did not take (sT_t inside a formula in prose): still no raw underscore
+  return first.replace(/(\p{L})_(\{[^}]+\}|[\p{L}\p{N}]+)/gu, (_m, b: string, idx: string) => b + sub(idx));
+}
+
+/** does the string contain a symbol that MathText would typeset? */
+export const hasMathSymbol = (s: string) => HAS_SUB.test(s) && mathPieces(s).some((p) => 'tex' in p);
 
 /** text with KaTeX symbols; non-string children pass through unchanged */
 export function MathText({ children }: { children: ReactNode }) {

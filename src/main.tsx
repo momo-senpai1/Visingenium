@@ -10,9 +10,13 @@ import './index.css';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
+import { installSvgMath } from './lib/svgMathObserver';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />
   </StrictMode>,
 );
+
+// symbols in third-party SVG text (chart labels) are set after rendering
+installSvgMath();
