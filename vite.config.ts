@@ -58,7 +58,8 @@ const base = process.env.VITE_BASE ? `${process.env.VITE_BASE.replace(/\/$/, '')
 
 export default defineConfig({
   base,
-  plugins: [react(), csp(), thirdPartyLicenses()],
+  // the custom JSX runtime (src/lib/mathjsx) is app code: a root-relative path keeps Vite from pre-bundling it as a dependency
+  plugins: [react({ jsxImportSource: '/src/lib/mathjsx' }), csp(), thirdPartyLicenses()],
   resolve: { alias: { '@': path.resolve(__dirname, 'src') } },
   build: {
     // jsPDF (loaded only for the PDF export) is the largest chunk

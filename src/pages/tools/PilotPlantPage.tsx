@@ -462,7 +462,7 @@ function ControlView({
           <div>
             <Tex block math={`G(s) = \\frac{K}{\\tau s + 1}\\,e^{-\\theta s} = \\frac{${N(K, 3)}}{${N(tau, 2)}\\,s + 1}\\,e^{-${N(theta, 2)}\\,s}`} />
             <Tex block math={`\\tau = \\frac{n\\,H}{L'} = \\frac{${spec.N - Math.round(spec.sensor) + 1}\\cdot ${N(spec.holdup, 2)}\\ \\mathrm{kmol}}{${N(r.col.Lp, 2)}\\ \\mathrm{kmol/h}} = ${N(tau, 2)}\\ \\mathrm{min}`} />
-            <Tex block math={`K = \\frac{\\Delta T_{TT}}{\\Delta \\dot Q_{reb}}\\ (\\text{${t('1 % reflux step')}})\\qquad \\theta = ${N(theta, 2)}\\ \\mathrm{min}`} />
+            <Tex block math={`K = \\frac{\\Delta T_{TT}}{\\Delta \\dot Q_{reb}}\\ (\\text{${t('1 % reflux step').replace('%', '\\%')}})\\qquad \\theta = ${N(theta, 2)}\\ \\mathrm{min}`} />
           </div>
           <div>
             <Tex block math={`C(s) = K_c\\left(1 + \\frac{1}{T_i s}\\right) = ${N(Math.abs(loop.Kc), 2)}\\left(1+\\frac{1}{${N(loop.Ti, 2)}\\,s}\\right)`} />

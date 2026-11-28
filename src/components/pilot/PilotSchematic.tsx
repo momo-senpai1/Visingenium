@@ -24,11 +24,14 @@ function Arrow({ x1, y1, x2, y2, color = INK }: { x1: number; y1: number; x2: nu
   );
 }
 
+/** label set by KaTeX: symbols like x_D, Q_c, T_W become real subscripts (HTML inside the SVG) */
 function Txt({ x, y, children, color = INK, anchor = 'start', bold = false }: { x: number; y: number; children: string; color?: string; anchor?: 'start' | 'middle' | 'end'; bold?: boolean }) {
+  const w = 320;
+  const x0 = anchor === 'end' ? x - w : anchor === 'middle' ? x - w / 2 : x;
   return (
-    <text x={x} y={y} fill={color} fontSize={11} fontFamily="JetBrains Mono, ui-monospace, monospace" textAnchor={anchor} fontWeight={bold ? 600 : 400}>
-      {children}
-    </text>
+    <foreignObject x={x0} y={y - 13} width={w} height={20} style={{ overflow: 'visible', pointerEvents: 'none' }}>
+      <div style={{ color, fontSize: 11, lineHeight: '16px', fontFamily: 'JetBrains Mono, ui-monospace, monospace', textAlign: anchor === 'end' ? 'right' : anchor === 'middle' ? 'center' : 'left', whiteSpace: 'nowrap', fontWeight: bold ? 600 : 400 }}>{children}</div>
+    </foreignObject>
   );
 }
 

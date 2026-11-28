@@ -229,14 +229,7 @@ export function ConvectionDiagram(props: Props) {
       ctx.fill();
     };
 
-    const text = (s: string, x: number, y: number, align: CanvasTextAlign = 'left') => {
-      ctx.font = '11px "JetBrains Mono", ui-monospace, monospace';
-      ctx.fillStyle = 'rgba(148,163,184,0.95)';
-      ctx.textAlign = align;
-      ctx.fillText(s, x, y);
-    };
-
-    const drawStatic = (s: Sim, cur: Props) => {
+    const drawStatic = (s: Sim) => {
       const wc = colWall(s.hot);
       const wallCol = `rgb(${wc.join(',')})`;
       const k = kind0;
@@ -279,10 +272,6 @@ export function ConvectionDiagram(props: Props) {
             arrowH(x, wallY - yy, 4 + 28 * f, 'rgba(100,116,139,0.85)');
           }
         }
-        text(`δ(L) ≈ ${cur.deltaEnd !== undefined ? cur.deltaEnd.toFixed(1) : '—'} mm`, plateX0 + L, wallY - dm - 8, 'right');
-        text(turb ? t('laminar → turbulent') : t('laminar'), plateX0, 18);
-        text(`T_W = ${cur.Tw} °C`, plateX0, wallY + 26);
-        text(`T_∞ = ${cur.Tf} °C`, plateX0 + L, 18, 'right');
       } else if (k === 'pipe') {
         const R = (pipeBot - pipeTop) / 2;
         for (const y of [pipeTop - 12, pipeBot]) {
@@ -298,9 +287,6 @@ export function ConvectionDiagram(props: Props) {
             arrowH(x, pipeTop + (j / 10) * 2 * R, 4 + 30 * f, 'rgba(100,116,139,0.85)');
           }
         }
-        text(turb ? t('turbulent profile (flat)') : t('laminar profile (parabola)'), 8, 18);
-        text(`T_W = ${cur.Tw} °C`, 8, H - 8);
-        text(`T_m = ${cur.Tf} °C`, s.W - 8, 18, 'right');
       } else if (k === 'cylinder') {
         const R = cylR();
         const cx = s.W * 0.36;
@@ -308,9 +294,6 @@ export function ConvectionDiagram(props: Props) {
         ctx.beginPath();
         ctx.arc(cx, H / 2, R, 0, Math.PI * 2);
         ctx.fill();
-        text(s.Re > 2e5 ? t('supercritical: narrow wake') : t('subcritical: separation at ≈ 80°, wide wake'), 8, 18);
-        text(`T_W = ${cur.Tw} °C`, cx, H / 2 + R + 16, 'center');
-        text(`T_∞ = ${cur.Tf} °C`, s.W - 8, 18, 'right');
       } else if (k === 'freePlate') {
         const wx = 70;
         const turb = s.Ra > 1e9;
@@ -341,9 +324,6 @@ export function ConvectionDiagram(props: Props) {
         }
         ctx.stroke();
         ctx.setLineDash([]);
-        text(turb ? t('laminar → turbulent') : t('laminar'), wx + 86, 18);
-        text(`T_W = ${cur.Tw} °C`, wx - 14, H - 14, 'right');
-        text(`T_∞ = ${cur.Tf} °C`, s.W - 8, H - 8, 'right');
       } else {
         const R = cylR() * 1.05;
         const cy = H * 0.52;
@@ -371,9 +351,6 @@ export function ConvectionDiagram(props: Props) {
         ctx.beginPath();
         ctx.arc(s.W / 2, cy, R, 0, Math.PI * 2);
         ctx.fill();
-        text(`T_W = ${cur.Tw} °C`, s.W / 2, H * 0.52 + R + 16, 'center');
-        text(`T_∞ = ${cur.Tf} °C`, s.W - 8, H - 8, 'right');
-        text(s.hot ? t('thermal plume rises') : t('cold fluid sinks'), 8, 18);
       }
     };
 
@@ -387,7 +364,7 @@ export function ConvectionDiagram(props: Props) {
       ctx.clearRect(0, 0, W, H);
       const dT = Math.abs(cur.Tw - cur.Tf);
       const strength = clamp(0.35 + dT / 70, 0.4, 1);
-      drawStatic(s, cur);
+      drawStatic(s);
       const wc = colWall(hot);
       const fc = colFluid(hot);
       for (const p of ps) {
@@ -414,5 +391,27 @@ export function ConvectionDiagram(props: Props) {
     // the particle field is rebuilt per case; every other input is read live from the ref
   }, [props.kind]);
 
-  return <canvas ref={ref} className="block w-full" style={{ height: H }} role="img" aria-label={t('Flow and boundary layer')} />;
+  const { kind, Re, Ra, Tw, Tf, deltaEnd } = props;
+  const turb = kind === 'plate' ? Re > 5e5 : kind === 'pipe' ? Re > 3000 : Ra > 1e9;
+  const hot = Tw >= Tf;
+  const cap: { tl: string; tr: string[]; bl: string } = {
+    plate: { tl: turb ? t('laminar → turbulent') : t('laminar'), tr: [`T_∞ = ${Tf} °C`, `δ(L) ≈ ${deltaEnd !== undefined ? deltaEnd.toFixed(1) : '—'} mm`], bl: `T_W = ${Tw} °C` },
+    pipe: { tl: turb ? t('turbulent profile (flat)') : t('laminar profile (parabola)'), tr: [`T_m = ${Tf} °C`], bl: `T_W = ${Tw} °C` },
+    cylinder: { tl: Re > 2e5 ? t('supercritical: narrow wake') : t('subcritical: separation at ≈ 80°, wide wake'), tr: [`T_∞ = ${Tf} °C`], bl: `T_W = ${Tw} °C` },
+    freePlate: { tl: turb ? t('laminar → turbulent') : t('laminar'), tr: [`T_∞ = ${Tf} °C`], bl: `T_W = ${Tw} °C` },
+    freeCylinder: { tl: hot ? t('thermal plume rises') : t('cold fluid sinks'), tr: [`T_∞ = ${Tf} °C`], bl: `T_W = ${Tw} °C` },
+  }[kind];
+  const capCls = 'pointer-events-none absolute font-mono text-[11px] leading-4 text-plant-400';
+  return (
+    <div className="relative">
+      <canvas ref={ref} className="block w-full" style={{ height: H }} role="img" aria-label={t('Flow and boundary layer')} />
+      <div className={`${capCls} left-2 top-1`}>{cap.tl}</div>
+      <div className={`${capCls} right-2 top-1 text-right`}>
+        {cap.tr.map((l) => (
+          <div key={l}>{l}</div>
+        ))}
+      </div>
+      <div className={`${capCls} bottom-1 left-2`}>{cap.bl}</div>
+    </div>
+  );
 }
